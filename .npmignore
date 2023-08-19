@@ -1,0 +1,15 @@
+# Ignore everything
+*
+
+# But don't ignore directories (so we can traverse into them)
+!*/
+node_modules
+demo
+
+# Whitelist the 'dist' folder and its contents
+!dist/
+!dist/**
+dist/*.map
+
+# Whitelist 'package.json'
+!package.json

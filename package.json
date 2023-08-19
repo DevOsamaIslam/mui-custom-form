@@ -1,0 +1,45 @@
+{
+  "name": "mui-custom-form",
+  "version": "0.1.6",
+  "description": "A versatile React form component utilizing MUI components and react-hook-form.",
+  "main": "dist/CustomForm.js",
+  "types": "dist/CustomForm.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevOsamaIslam/mui-custom-form.git"
+  },
+  "keywords": [
+    "react",
+    "form",
+    "MUI",
+    "react-hook-form",
+    "customizable"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DevOsamaIslam/mui-custom-form/issues"
+  },
+  "homepage": "https://github.com/DevOsamaIslam/mui-custom-form#readme",
+  "peerDependencies": {
+    "date-fns": "^2.30.0",
+    "dayjs": "^1.11.9",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@types/node": "^20.5.1",
+    "@types/react": "^18.2.20",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@mui/material": "5.14.2",
+    "@mui/x-date-pickers": "^6.10.2",
+    "react-hook-form": "^7.45.2"
+  }
+}

@@ -36,6 +36,8 @@ Ensure that you have the required peer dependencies installed:
 
 #### Props
 
+- CustomForm component
+
 | Name           | Description                                              |
 | -------------- | -------------------------------------------------------- |
 | `fieldsGroups` | 2D array representing groups of fields in the form.      |
@@ -44,14 +46,35 @@ Ensure that you have the required peer dependencies installed:
 | `submitButton` | Boolean to toggle the visibility of the submit button.   |
 | `otherProps`   | Any additional props to pass down to the form component. |
 
+- CustomField 2D array
+
+The `ICustomField` interface is used to define each field in the form. Below are its properties:
+
+| Name         | Description                                                                               |
+| ------------ | ----------------------------------------------------------------------------------------- |
+| `label`      | The display label of the field.                                                           |
+| `name`       | The name attribute of the field, used for form data identification.                       |
+| `type`       | The type of the field, determining its behavior and appearance.                           |
+| `list`       | An array of options for select type fields. Each option has a label and a value.          |
+| `required`   | Indicates whether the field is mandatory or not.                                          |
+| `otherProps` | Any additional props to pass to the underlying MUI component.                             |
+| `span`       | A number between 1 and 12, representing the grid span for the field in MUI's grid system. |
+
+The `list` array, has the following structure:
+
+| Name    | Description                                                |
+| ------- | ---------------------------------------------------------- |
+| `icon`  | An optional icon to display alongside the option.          |
+| `label` | The display label of the option.                           |
+| `value` | The value of the option, used when the option is selected. |
+
+---
+
 ### Example
 
 Here's a simple example showcasing how to implement a `CustomForm`:
 
 ```typescript
-import React from "react"
-import { CustomForm } from "mui-custom-form"
-
 const MyComponent = () => {
   const formControl = useForm()
 
@@ -72,7 +95,7 @@ const MyComponent = () => {
   ]
 
   const handleSubmit = (data: unknown) => {
-    console.log(data)
+    console.log({ success: data })
   }
 
   return (
@@ -83,17 +106,24 @@ const MyComponent = () => {
     />
   )
 }
-
-export default MyComponent
 ```
 
 Usage with zod
 
 ```typescript
-const MyComponent = () => {
-  const formControl = useForm()
+const Fields = z.object({
+  username: z.string(),
+  age: z.string(),
+})
 
-  const fieldsGroups: ICustomField[][] = [
+type FieldTypes = z.infer<typeof Fields>
+
+function MyComponent() {
+  const formControl = useForm<FieldTypes>({
+    resolver: zodResolver(Fields),
+  })
+
+  const fieldsGroups: ICustomField<FieldTypes>[][] = [
     [
       {
         label: "Username",
@@ -102,27 +132,28 @@ const MyComponent = () => {
         required: true,
       },
       {
-        label: "Birthdate",
-        name: "birthdate",
-        type: "date",
+        label: "Age",
+        name: "age",
+        type: "number",
+        required: true,
       },
     ],
   ]
 
-  const handleSubmit = (data: unknown) => {
-    console.log(data)
+  const onSubmit = (data: FieldTypes) => {
+    console.log({ success: data })
   }
 
   return (
-    <CustomForm
-      fieldsGroups={fieldsGroups}
-      onSubmit={formControl.handleSubmit(handleSubmit)}
-      formControl={formControl}
-    />
+      <CustomForm
+        fieldsGroups={fieldsGroups}
+        onSubmit={formControl.handleSubmit(onSubmit, (fail) =>
+          console.log({ fail })
+        )}
+        formControl={formControl}
+      />
   )
-}
 
-export default MyComponent
 ```
 
 ### Contribution

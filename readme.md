@@ -50,7 +50,7 @@ Here's a simple example showcasing how to implement a `CustomForm`:
 
 ```typescript
 import React from "react"
-import { CustomForm } from "your-package-name"
+import { CustomForm } from "mui-custom-form"
 
 const MyComponent = () => {
   const formControl = useForm()

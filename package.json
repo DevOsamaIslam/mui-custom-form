@@ -1,6 +1,6 @@
 {
   "name": "mui-custom-form",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A versatile React form component utilizing MUI components and react-hook-form.",
   "main": "dist/CustomForm.js",
   "types": "dist/CustomForm.d.ts",

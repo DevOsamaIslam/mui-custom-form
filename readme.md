@@ -145,15 +145,15 @@ function MyComponent() {
   }
 
   return (
-      <CustomForm
-        fieldsGroups={fieldsGroups}
-        onSubmit={formControl.handleSubmit(onSubmit, (fail) =>
-          console.log({ fail })
-        )}
-        formControl={formControl}
-      />
+    <CustomForm
+      fieldsGroups={fieldsGroups}
+      onSubmit={formControl.handleSubmit(onSubmit, (fail) =>
+        console.log({ fail })
+      )}
+      formControl={formControl}
+    />
   )
-
+}
 ```
 
 ### Contribution

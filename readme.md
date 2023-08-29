@@ -1,84 +1,76 @@
-## CustomForm
+# 📝 CustomForm
 
-`CustomForm` is a versatile React form component designed to streamline the form-building process. Utilizing the power of MUI components and the flexibility of `react-hook-form`, this package offers an intuitive way to create dynamic and responsive forms.
+`CustomForm` is a versatile React form component designed to simplify your form-building journey. Powered by MUI components and the flexibility of `react-hook-form`, this package offers an intuitive way to create dynamic and responsive forms.
 
-### Table of Contents
+## 📚 Table of Contents
 
-- [Installation](#installation)
-- [Features](#features)
-- [Usage](#usage)
-  - [Props](#props)
-- [Example](#example)
-- [Contribution](#contribution)
-- [License](#license)
+- [🛠 Installation](#installation)
+- [✨ Features](#features)
+- [🚀 Usage](#usage)
+  - [🔧 Props](#props)
+- [📖 Examples](#examples)
+- [🤝 Contribution](#contribution)
+- [📜 License](#license)
 
-### Installation
-
-To add `CustomForm` to your project, use the following command:
+## 🛠 Installation
 
 ```bash
 npm install mui-custom-form
 ```
 
-Ensure that you have the required peer dependencies installed:
+📦 **Dependencies**:
 
 - `@mui/material`
 - `@mui/x-date-pickers`
 - `react-hook-form`
 
-### Features
+## ✨ Features
 
-- **Dynamic Field Types**: Supports text, number, single-select, multi-select, date, and file input types.
-- **MUI Integration**: Seamless integration with MUI components for a consistent and professional look.
-- **Responsive Design**: Adaptable grid system, ensuring your form looks great on all devices.
+- 🎛 **Dynamic Field Types**
+- 🎨 **MUI Integration**
+- 📱 **Responsive Design**
 
-### Usage
+## 🚀 Usage
 
-#### Props
+### 🔧 Props
 
-- CustomForm component
+#### CustomForm Component
 
-| Name           | Description                                              |
-| -------------- | -------------------------------------------------------- |
-| `fieldsGroups` | 2D array representing groups of fields in the form.      |
-| `onSubmit`     | Function called upon form submission.                    |
-| `formControl`  | Control object from `react-hook-form`.                   |
-| `submitButton` | Boolean to toggle the visibility of the submit button.   |
-| `otherProps`   | Any additional props to pass down to the form component. |
+| Name                     | Description                                                        | Is Required? |
+| ------------------------ | ------------------------------------------------------------------ | ------------ |
+| `fieldsGroups`           | 2D array representing groups of fields in the form.                | Yes          |
+| `onSubmit`               | Array containing functions for form submission and error handling. | Yes          |
+| `formControl`            | Control object from `react-hook-form`.                             | Yes          |
+| `submitButton`           | Boolean to toggle the visibility of the submit button.             | No           |
+| `resetButton`            | Boolean to toggle the visibility of the reset button.              | No           |
+| `actionButtonsPlacement` | CSS property for button placement.                                 | No           |
+| `otherProps`             | Any additional props to pass down to the form component.           | No           |
 
-- CustomField 2D array
+#### CustomField 2D Array
 
-The `ICustomField` interface is used to define each field in the form. Below are its properties:
+| Name         | Description                                 | Is Required? |
+| ------------ | ------------------------------------------- | ------------ |
+| `label`      | The display label of the field.             | Yes          |
+| `name`       | The name attribute of the field.            | Yes          |
+| `type`       | The type of the field.                      | Yes          |
+| `list`       | An array of options for select type fields. | Conditional  |
+| `required`   | Is the field mandatory?                     | No           |
+| `otherProps` | Any additional props.                       | No           |
+| `span`       | Grid span for the field.                    | No           |
 
-| Name         | Description                                                                               |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| `label`      | The display label of the field.                                                           |
-| `name`       | The name attribute of the field, used for form data identification.                       |
-| `type`       | The type of the field, determining its behavior and appearance.                           |
-| `list`       | An array of options for select type fields. Each option has a label and a value.          |
-| `required`   | Indicates whether the field is mandatory or not.                                          |
-| `otherProps` | Any additional props to pass to the underlying MUI component.                             |
-| `span`       | A number between 1 and 12, representing the grid span for the field in MUI's grid system. |
-
-The `list` array, has the following structure:
-
-| Name    | Description                                                |
-| ------- | ---------------------------------------------------------- |
-| `icon`  | An optional icon to display alongside the option.          |
-| `label` | The display label of the option.                           |
-| `value` | The value of the option, used when the option is selected. |
+#### \* `list` prop is required when the type is `single-select` or `multi-select`.
 
 ---
 
-### Example
+## 📖 Examples
 
-Here's a simple example showcasing how to implement a `CustomForm`:
+### Basic Form
 
-```typescript
-const MyComponent = () => {
-  const formControl = useForm()
+```ts
+const BasicForm = () => {
+  const formControl = useForm<{ username: string; birthdate: string }>()
 
-  const fieldsGroups: ICustomField[][] = [
+  const fieldsGroups: IFieldGroup = [
     [
       {
         label: "Username",
@@ -90,40 +82,52 @@ const MyComponent = () => {
         label: "Birthdate",
         name: "birthdate",
         type: "date",
+        required: true,
       },
     ],
   ]
 
-  const handleSubmit = (data: unknown) => {
+  const handleSubmit = (data: { username: string; birthdate: string }) => {
     console.log({ success: data })
+  }
+
+  const submitError = (data: unknown) => {
+    console.log({ error: data })
   }
 
   return (
     <CustomForm
       fieldsGroups={fieldsGroups}
-      onSubmit={formControl.handleSubmit(handleSubmit)}
+      onSubmit={[handleSubmit, submitError]}
       formControl={formControl}
     />
   )
 }
 ```
 
-Usage with zod
+### Form with Zod Validation
 
-```typescript
+```ts
+const GENDERS = ["Male", "Female"] as const
+const HOBBIES = ["Coding", "Collections", "Hiking"] as const
+
 const Fields = z.object({
   username: z.string(),
-  age: z.string(),
+  age: z.number().min(16).max(80),
+  gender: z.enum(GENDERS),
+  hobbies: z.array(z.enum(HOBBIES)).nonempty("Please choose one"),
+  birthDate: z.date(),
+  file: z.instanceof(File).optional(),
 })
 
 type FieldTypes = z.infer<typeof Fields>
 
-function MyComponent() {
+const FormWithZod = () => {
   const formControl = useForm<FieldTypes>({
     resolver: zodResolver(Fields),
   })
 
-  const fieldsGroups: ICustomField<FieldTypes>[][] = [
+  const fieldsGroups: IFieldGroup<FieldTypes> = [
     [
       {
         label: "Username",
@@ -138,6 +142,33 @@ function MyComponent() {
         required: true,
       },
     ],
+    [
+      {
+        label: "Gender",
+        name: "gender",
+        type: "single-select",
+        list: GENDERS.map((gender) => ({ label: gender, value: gender })),
+      },
+      {
+        label: "Hobbies",
+        name: "hobbies",
+        type: "multi-select",
+        list: HOBBIES.map((hobby) => ({ label: hobby, value: hobby })),
+        required: true,
+      },
+    ],
+    [
+      {
+        label: "Date of birth",
+        name: "birthDate",
+        type: "date",
+      },
+      {
+        label: "Upload Image",
+        name: "file",
+        type: "file",
+      },
+    ],
   ]
 
   const onSubmit = (data: FieldTypes) => {
@@ -147,17 +178,15 @@ function MyComponent() {
   return (
     <CustomForm
       fieldsGroups={fieldsGroups}
-      onSubmit={formControl.handleSubmit(onSubmit, (fail) =>
-        console.log({ fail })
-      )}
+      onSubmit={[onSubmit]}
       formControl={formControl}
     />
   )
 }
 ```
 
-### Contribution
-
-Your contributions are always welcome! Please create a pull request and we'll review your suggestion.
-
 ---
+
+## 🤝 Contribution
+
+Your contributions are always welcome!

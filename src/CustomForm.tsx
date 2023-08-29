@@ -11,42 +11,20 @@ import {
   TextField,
 } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
-import { Controller } from "react-hook-form"
-import { useForm } from "react-hook-form"
 import React from "react"
+import { Controller, FieldValues, Path } from "react-hook-form"
+import { ICustomField, ICustomForm } from "./types"
 
-export type $option<T = any> = {
-  icon?: React.ReactNode
-  label: string
-  value: T
-}
-
-export interface ICustomField<T = string> {
-  label: string
-  name: T extends string ? string : keyof T
-  type: "text" | "number" | "single-select" | "multi-select" | "date" | "file"
-  list?: $option[]
-  required?: boolean // This can be further refined to your validation rules
-  otherProps?: any
-  span?: number // A number between 1 and 12, representing MUI's grid system
-}
-
-interface ICustomForm {
-  fieldsGroups: ICustomField<any>[][]
-  onSubmit: ReturnType<this["formControl"]["handleSubmit"]>
-  formControl: ReturnType<typeof useForm<any>>
-  submitButton?: boolean
-  otherProps?: any
-}
-
-export const CustomForm: React.FC<ICustomForm> = ({
+export const CustomForm = <T extends FieldValues>({
   fieldsGroups,
   onSubmit,
   formControl,
   submitButton = true,
+  resetButton,
+  actionButtonsPlacement,
   otherProps,
-}) => {
-  const { control, setValue } = formControl
+}: ICustomForm<T>) => {
+  const { control, setValue, reset, register } = formControl
 
   const renderField = (field: ICustomField<string>) => {
     switch (field.type) {
@@ -54,11 +32,13 @@ export const CustomForm: React.FC<ICustomForm> = ({
       case "number":
         return (
           <Controller
-            name={field.name}
+            name={field.name as Path<T>}
             control={control}
+            rules={{ required: field.required }}
             render={({ field: controlField, fieldState: { error } }) => (
               <TextField
                 {...controlField}
+                value={controlField.value || ""}
                 {...field.otherProps}
                 label={field.label}
                 type={field.type}
@@ -66,6 +46,14 @@ export const CustomForm: React.FC<ICustomForm> = ({
                 required={field.required}
                 error={!!error}
                 helperText={error?.message}
+                onChange={(e) => {
+                  if (!e.target.value) return controlField.onChange(undefined)
+                  controlField.onChange(
+                    field.type === "number"
+                      ? parseFloat(e.target.value)
+                      : e.target.value
+                  )
+                }}
               />
             )}
           />
@@ -74,13 +62,18 @@ export const CustomForm: React.FC<ICustomForm> = ({
       case "multi-select":
         return (
           <Controller
-            name={field.name}
+            name={field.name as Path<T>}
             control={control}
             render={({ field: controlField, fieldState: { error } }) => (
               <FormControl fullWidth error={!!error}>
                 <InputLabel required={field.required}>{field.label}</InputLabel>
                 <Select
+                  label={field.label}
                   {...controlField}
+                  value={
+                    controlField.value ||
+                    (field.type === "multi-select" ? [] : "")
+                  }
                   {...field.otherProps}
                   multiple={field.type === "multi-select"}>
                   {field.list?.map((item) => (
@@ -97,11 +90,12 @@ export const CustomForm: React.FC<ICustomForm> = ({
       case "date":
         return (
           <Controller
-            name={field.name}
+            name={field.name as Path<T>}
             control={control}
             render={({ field: controlField, fieldState: { error } }) => (
               <DatePicker
                 {...controlField}
+                value={controlField.value || null}
                 {...field.otherProps}
                 label={field.label}
                 onChange={controlField.onChange}
@@ -132,7 +126,7 @@ export const CustomForm: React.FC<ICustomForm> = ({
                     e.target.files && e.target.files.length > 0
                       ? e.target.files[0]
                       : undefined
-                  setValue(field.name, fileValue)
+                  setValue(field.name as any, fileValue as any)
                 }}
               />
             </Button>
@@ -143,10 +137,15 @@ export const CustomForm: React.FC<ICustomForm> = ({
     }
   }
 
+  const submitButtonProps =
+    submitButton && submitButton !== true ? submitButton : {}
+  const resetButtonProps =
+    resetButton && resetButton !== true ? resetButton : {}
+
   return (
     <Stack
       component="form"
-      onSubmit={onSubmit}
+      onSubmit={formControl.handleSubmit(onSubmit[0], onSubmit[1])}
       noValidate
       {...otherProps}
       spacing={3}>
@@ -155,17 +154,28 @@ export const CustomForm: React.FC<ICustomForm> = ({
           <Grid container item key={rowIndex} spacing={2}>
             {fields.map((field, fieldIndex) => (
               <Grid item key={fieldIndex} xs={field.span || true}>
-                {renderField(field as unknown as ICustomField<string>)}
+                {renderField(field as ICustomField<string>)}
               </Grid>
             ))}
           </Grid>
         ))}
       </Grid>
-      {submitButton && (
-        <Button type="submit" variant="contained">
-          Submit
-        </Button>
-      )}
+      <Stack direction="row" justifyContent={actionButtonsPlacement}>
+        {resetButton && (
+          <Button
+            type="reset"
+            variant="contained"
+            onClick={() => reset()}
+            {...resetButtonProps}>
+            Reset
+          </Button>
+        )}
+        {submitButton && (
+          <Button type="submit" variant="contained" {...submitButtonProps}>
+            Submit
+          </Button>
+        )}
+      </Stack>
     </Stack>
   )
 }

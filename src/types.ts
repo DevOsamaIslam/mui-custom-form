@@ -1,3 +1,4 @@
+// types.ts
 import { ButtonProps } from "@mui/material"
 import { CSSProperties } from "react"
 import {
@@ -10,7 +11,17 @@ import {
 type name<T> = T extends string ? string : keyof T
 
 type SelectTypes = "single-select" | "multi-select"
-type BaseTypes = "text" | "number" | "date" | "file"
+type BaseTypes =
+  | "text"
+  | "number"
+  | "date"
+  | "file"
+  | "password"
+  | "textarea"
+  | "switch"
+  | "checkbox-group"
+  | "radio-group"
+  | "custom"
 
 export interface ISelectField {
   type: SelectTypes
@@ -20,12 +31,14 @@ export interface ISelectField {
 export interface IOtherField {
   type: BaseTypes
   list?: $option[]
+  // For custom components, specify the component
+  component?: React.ComponentType<CustomComponentProps>
 }
 
 export type ICustomField<T = string> = {
   label: string
   name: name<T> | name<T>[]
-  required?: true
+  required?: boolean
   otherProps?: any
   span?: number
 } & (
@@ -35,6 +48,8 @@ export type ICustomField<T = string> = {
     }
   | {
       type: BaseTypes
+      list?: $option[]
+      component?: React.ComponentType<CustomComponentProps>
     }
 )
 
@@ -54,4 +69,11 @@ export interface ICustomForm<T extends FieldValues> {
   submitButton?: ButtonProps | boolean
   resetButton?: ButtonProps | boolean
   otherProps?: any
+}
+
+// Define props that custom components must adhere to
+export interface CustomComponentProps {
+  value: any
+  onChange: (value: any) => void
+  [key: string]: any // Allow additional props
 }

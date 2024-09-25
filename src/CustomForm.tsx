@@ -1,19 +1,26 @@
+// CustomForm.tsx
 import {
   Button,
   FormControl,
+  FormControlLabel,
   FormHelperText,
   FormLabel,
-  Grid,
+  Grid2 as Grid,
   InputLabel,
   MenuItem,
   Select,
   Stack,
   TextField,
+  Switch as MuiSwitch,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  TextFieldProps,
 } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import React from "react"
 import { Controller, FieldValues, Path } from "react-hook-form"
-import { ICustomField, ICustomForm } from "./types"
+import { ICustomField, ICustomForm, CustomComponentProps } from "./types"
 
 export const CustomForm = <T extends FieldValues>({
   fieldsGroups,
@@ -30,6 +37,7 @@ export const CustomForm = <T extends FieldValues>({
     switch (field.type) {
       case "text":
       case "number":
+      case "password":
         return (
           <Controller
             name={field.name as Path<T>}
@@ -58,12 +66,39 @@ export const CustomForm = <T extends FieldValues>({
             )}
           />
         )
+
+      case "textarea":
+        return (
+          <Controller
+            name={field.name as Path<T>}
+            control={control}
+            rules={{ required: field.required }}
+            render={({ field: controlField, fieldState: { error } }) => (
+              <TextField
+                {...controlField}
+                value={controlField.value || ""}
+                {...field.otherProps}
+                label={field.label}
+                type="text"
+                fullWidth
+                required={field.required}
+                multiline
+                rows={field.otherProps?.rows || 4}
+                error={!!error}
+                helperText={error?.message}
+                onChange={controlField.onChange}
+              />
+            )}
+          />
+        )
+
       case "single-select":
       case "multi-select":
         return (
           <Controller
             name={field.name as Path<T>}
             control={control}
+            rules={{ required: field.required }}
             render={({ field: controlField, fieldState: { error } }) => (
               <FormControl fullWidth error={!!error}>
                 <InputLabel required={field.required}>{field.label}</InputLabel>
@@ -87,51 +122,186 @@ export const CustomForm = <T extends FieldValues>({
             )}
           />
         )
+
       case "date":
         return (
           <Controller
             name={field.name as Path<T>}
             control={control}
+            rules={{ required: field.required }}
             render={({ field: controlField, fieldState: { error } }) => (
               <DatePicker
                 {...controlField}
                 value={controlField.value || null}
                 {...field.otherProps}
                 label={field.label}
-                onChange={controlField.onChange}
-                slotProps={{
-                  textField: {
-                    required: field.required,
-                    error: !!error,
-                    helperText: error?.message,
-                    fullWidth: true,
-                  },
-                }}
+                onChange={(date) => controlField.onChange(date)}
+                renderInput={(params: TextFieldProps) => (
+                  <TextField
+                    {...params}
+                    required={field.required}
+                    error={!!error}
+                    helperText={error?.message}
+                    fullWidth
+                  />
+                )}
               />
             )}
           />
         )
+
       case "file":
         return (
-          <>
-            <FormLabel component="legend">{field.label}</FormLabel>
+          <FormControl fullWidth error={!!field.required}>
+            <FormLabel component="legend" required={field.required}>
+              {field.label}
+            </FormLabel>
             <Button variant="contained" component="label">
               Upload File
               <input
                 type="file"
                 hidden
                 onChange={(e) => {
-                  // Set the value to either the File instance or undefined
                   const fileValue =
                     e.target.files && e.target.files.length > 0
                       ? e.target.files[0]
                       : undefined
                   setValue(field.name as any, fileValue as any)
                 }}
+                {...field.otherProps}
               />
             </Button>
-          </>
+          </FormControl>
         )
+
+      case "switch":
+        return (
+          <Controller
+            name={field.name as Path<T>}
+            control={control}
+            rules={{ required: field.required }}
+            render={({ field: controlField, fieldState: { error } }) => (
+              <FormControlLabel
+                control={
+                  <MuiSwitch
+                    {...controlField}
+                    checked={!!controlField.value}
+                    onChange={(e) => controlField.onChange(e.target.checked)}
+                    {...field.otherProps}
+                  />
+                }
+                label={field.label}
+              />
+            )}
+          />
+        )
+
+      case "checkbox-group":
+        return (
+          <Controller
+            name={field.name as Path<T>}
+            control={control}
+            rules={{ required: field.required }}
+            render={({ field: controlField, fieldState: { error } }) => (
+              <FormControl component="fieldset" error={!!error}>
+                <FormLabel component="legend" required={field.required}>
+                  {field.label}
+                </FormLabel>
+                <Stack direction="row" spacing={2}>
+                  {field.list?.map((option) => (
+                    <FormControlLabel
+                      key={option.value}
+                      control={
+                        <Checkbox
+                          checked={
+                            controlField.value?.includes(option.value) || false
+                          }
+                          onChange={(e) => {
+                            const checked = e.target.checked
+                            const value = option.value
+                            if (checked) {
+                              controlField.onChange([
+                                ...(controlField.value || []),
+                                value,
+                              ])
+                            } else {
+                              controlField.onChange(
+                                (controlField.value || []).filter(
+                                  (v: any) => v !== value
+                                )
+                              )
+                            }
+                          }}
+                          {...field.otherProps}
+                        />
+                      }
+                      label={option.label}
+                    />
+                  ))}
+                </Stack>
+                {error && <FormHelperText>{error.message}</FormHelperText>}
+              </FormControl>
+            )}
+          />
+        )
+
+      case "radio-group":
+        return (
+          <Controller
+            name={field.name as Path<T>}
+            control={control}
+            rules={{ required: field.required }}
+            render={({ field: controlField, fieldState: { error } }) => (
+              <FormControl component="fieldset" error={!!error}>
+                <FormLabel component="legend" required={field.required}>
+                  {field.label}
+                </FormLabel>
+                <RadioGroup
+                  {...controlField}
+                  value={controlField.value || ""}
+                  onChange={(e) => controlField.onChange(e.target.value)}
+                  row={field.otherProps?.row || false}>
+                  {field.list?.map((option) => (
+                    <FormControlLabel
+                      key={option.value}
+                      value={option.value}
+                      control={<Radio {...field.otherProps} />}
+                      label={option.label}
+                    />
+                  ))}
+                </RadioGroup>
+                {error && <FormHelperText>{error.message}</FormHelperText>}
+              </FormControl>
+            )}
+          />
+        )
+
+      case "custom":
+        if (field.component) {
+          const CustomComponent = field.component
+          return (
+            <Controller
+              name={field.name as Path<T>}
+              control={control}
+              rules={{ required: field.required }}
+              render={({ field: controlField, fieldState: { error } }) => (
+                <FormControl fullWidth error={!!error}>
+                  <FormLabel component="legend" required={field.required}>
+                    {field.label}
+                  </FormLabel>
+                  <CustomComponent
+                    value={controlField.value}
+                    onChange={controlField.onChange}
+                    {...field.otherProps}
+                  />
+                  {error && <FormHelperText>{error.message}</FormHelperText>}
+                </FormControl>
+              )}
+            />
+          )
+        }
+        return null
+
       default:
         return null
     }
@@ -151,16 +321,19 @@ export const CustomForm = <T extends FieldValues>({
       spacing={3}>
       <Grid container spacing={1}>
         {fieldsGroups.map((fields, rowIndex) => (
-          <Grid container item key={rowIndex} spacing={2}>
+          <Grid container key={rowIndex} spacing={2}>
             {fields.map((field, fieldIndex) => (
-              <Grid item key={fieldIndex} xs={field.span || true}>
+              <Grid key={fieldIndex} size={field.span || 12}>
                 {renderField(field as ICustomField<string>)}
               </Grid>
             ))}
           </Grid>
         ))}
       </Grid>
-      <Stack direction="row" justifyContent={actionButtonsPlacement}>
+      <Stack
+        direction="row"
+        justifyContent={actionButtonsPlacement || "flex-end"}
+        spacing={2}>
         {resetButton && (
           <Button
             type="reset"

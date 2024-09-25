@@ -165,7 +165,7 @@ export const CustomForm = <T extends FieldValues>({
                 onChange={(e) => {
                   const fileValue =
                     e.target.files && e.target.files.length > 0
-                      ? e.target.files[0]
+                      ? e.target.files
                       : undefined
                   setValue(field.name as any, fileValue as any)
                 }}

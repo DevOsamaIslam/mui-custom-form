@@ -116,7 +116,9 @@ const Fields = z.object({
     .array(z.enum(HOBBIES), { required_error: "Hobbies are required" })
     .nonempty("Please choose at least one hobby"),
   planDate: z.date({ required_error: "planDate is required" }),
-  file: z.instanceof(File, { message: "File must be a valid file" }).optional(),
+  file: z
+    .instanceof(FileList, { message: "File must be a valid file" })
+    .optional(),
   customField: z.string().optional(),
   eventDates: z.tuple([z.date().nullable(), z.date().nullable()]).optional(),
   subscribe: z.boolean().optional(),

@@ -1,5 +1,5 @@
 // types.ts
-import { ButtonProps } from "@mui/material"
+import { ButtonProps, StackProps } from "@mui/material"
 import { CSSProperties } from "react"
 import {
   FieldValues,
@@ -68,7 +68,8 @@ export interface ICustomForm<T extends FieldValues> {
   actionButtonsPlacement?: CSSProperties["justifyContent"]
   submitButton?: ButtonProps | boolean
   resetButton?: ButtonProps | boolean
-  otherProps?: any
+  layout?: StackProps["direction"]
+  otherProps?: StackProps
 }
 
 // Define props that custom components must adhere to

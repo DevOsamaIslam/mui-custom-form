@@ -1,6 +1,7 @@
 // CustomForm.tsx
 import {
   Button,
+  Checkbox,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -8,19 +9,18 @@ import {
   Grid2 as Grid,
   InputLabel,
   MenuItem,
+  Switch as MuiSwitch,
+  Radio,
+  RadioGroup,
   Select,
   Stack,
   TextField,
-  Switch as MuiSwitch,
-  Checkbox,
-  Radio,
-  RadioGroup,
   TextFieldProps,
 } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import React from "react"
 import { Controller, FieldValues, Path } from "react-hook-form"
-import { ICustomField, ICustomForm, CustomComponentProps } from "./types"
+import { ICustomField, ICustomForm } from "./types"
 
 export const CustomForm = <T extends FieldValues>({
   fieldsGroups,
@@ -29,9 +29,10 @@ export const CustomForm = <T extends FieldValues>({
   submitButton = true,
   resetButton,
   actionButtonsPlacement,
+  layout,
   otherProps,
 }: ICustomForm<T>) => {
-  const { control, setValue, reset, register } = formControl
+  const { control, setValue, reset } = formControl
 
   const renderField = (field: ICustomField<string>) => {
     switch (field.type) {
@@ -317,19 +318,18 @@ export const CustomForm = <T extends FieldValues>({
       component="form"
       onSubmit={formControl.handleSubmit(onSubmit[0], onSubmit[1])}
       noValidate
+      direction={layout}
       {...otherProps}
       spacing={3}>
-      <Grid container spacing={1}>
-        {fieldsGroups.map((fields, rowIndex) => (
-          <Grid container key={rowIndex} spacing={2}>
-            {fields.map((field, fieldIndex) => (
-              <Grid key={fieldIndex} size={field.span || 12}>
-                {renderField(field as ICustomField<string>)}
-              </Grid>
-            ))}
-          </Grid>
-        ))}
-      </Grid>
+      {fieldsGroups.map((fields, rowIndex) => (
+        <Grid container key={rowIndex} spacing={2} className="debug">
+          {fields.map((field, fieldIndex) => (
+            <Grid key={fieldIndex} size={field.span || 12}>
+              {renderField(field as ICustomField<string>)}
+            </Grid>
+          ))}
+        </Grid>
+      ))}
       <Stack
         direction="row"
         justifyContent={actionButtonsPlacement || "flex-end"}

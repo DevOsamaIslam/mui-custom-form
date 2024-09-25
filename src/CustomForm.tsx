@@ -313,6 +313,20 @@ export const CustomForm = <T extends FieldValues>({
   const resetButtonProps =
     resetButton && resetButton !== true ? resetButton : {}
 
+  // Function to calculate spans dynamically
+  const calculateSpan = (fields: ICustomField<any>[]) => {
+    const totalDefinedSpan = fields.reduce(
+      (acc, field) => acc + (field.span || 0),
+      0
+    )
+    const autoSpanFields = fields.filter((field) => !field.span).length
+    const remainingSpan = 12 - totalDefinedSpan
+    const calculatedSpan =
+      autoSpanFields > 0 ? Math.floor(remainingSpan / autoSpanFields) : 12
+
+    return { calculatedSpan, autoSpanFields }
+  }
+
   return (
     <Stack
       component="form"
@@ -321,15 +335,27 @@ export const CustomForm = <T extends FieldValues>({
       direction={layout}
       {...otherProps}
       spacing={3}>
-      {fieldsGroups.map((fields, rowIndex) => (
-        <Grid container key={rowIndex} spacing={2} className="debug">
-          {fields.map((field, fieldIndex) => (
-            <Grid key={fieldIndex} size={field.span || 12}>
-              {renderField(field as ICustomField<string>)}
-            </Grid>
-          ))}
-        </Grid>
-      ))}
+      {fieldsGroups.map((fields, rowIndex) => {
+        const { calculatedSpan, autoSpanFields } = calculateSpan(fields)
+
+        return (
+          <Grid container key={rowIndex} spacing={2} className="debug">
+            {fields.map((field, fieldIndex) => (
+              <Grid
+                key={fieldIndex}
+                size={
+                  field.span
+                    ? field.span
+                    : autoSpanFields > 0
+                    ? calculatedSpan
+                    : 12
+                }>
+                {renderField(field as ICustomField<string>)}
+              </Grid>
+            ))}
+          </Grid>
+        )
+      })}
       <Stack
         direction="row"
         justifyContent={actionButtonsPlacement || "flex-end"}

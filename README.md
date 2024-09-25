@@ -189,7 +189,7 @@ const Fields = z.object({
     .array(z.enum(HOBBIES), { required_error: "Hobbies are required" })
     .nonempty("Please choose at least one hobby"),
   birthDate: z.date({ required_error: "Birthdate is required" }),
-  file: z.instanceof(File).optional(),
+  file: z.instanceof(FileList).optional(),
 });
 
 type FieldTypes = z.infer<typeof Fields>;

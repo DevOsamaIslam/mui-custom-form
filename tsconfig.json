@@ -7,7 +7,10 @@
     "sourceMap": true,
     "outDir": "./dist",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true, // **Add this line**
+    "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": false // **Add this line**
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

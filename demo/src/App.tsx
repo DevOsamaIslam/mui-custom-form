@@ -27,7 +27,6 @@ const BasicForm = () => {
         type: "text",
         required: true,
         otherProps: { placeholder: "Enter your username" },
-        span: 6,
       },
       {
         label: "Password",
@@ -35,7 +34,6 @@ const BasicForm = () => {
         type: "password",
         required: true,
         otherProps: { placeholder: "Enter your password" },
-        span: 6,
       },
     ],
     [

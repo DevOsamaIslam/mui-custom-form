@@ -1,11 +1,10 @@
-// types.ts
 import { ButtonProps, StackProps } from "@mui/material"
 import { CSSProperties } from "react"
 import {
   FieldValues,
   SubmitErrorHandler,
   SubmitHandler,
-  useForm,
+  UseFormReturn,
 } from "react-hook-form"
 
 type name<T> = T extends string ? string : keyof T
@@ -64,7 +63,7 @@ export type IFieldGroup<T = any> = ICustomField<T>[][]
 export interface ICustomForm<T extends FieldValues> {
   fieldsGroups: IFieldGroup<any>
   onSubmit: [SubmitHandler<T>, SubmitErrorHandler<T>?]
-  formControl: ReturnType<typeof useForm<T>>
+  formControl: UseFormReturn<T>
   actionButtonsPlacement?: CSSProperties["justifyContent"]
   submitButton?: ButtonProps | boolean
   resetButton?: ButtonProps | boolean

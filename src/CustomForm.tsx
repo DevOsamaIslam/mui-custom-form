@@ -6,7 +6,7 @@ import {
   FormControlLabel,
   FormHelperText,
   FormLabel,
-  Grid2 as Grid,
+  Grid,
   InputLabel,
   MenuItem,
   Switch as MuiSwitch,
@@ -339,7 +339,7 @@ export const CustomForm = <T extends FieldValues>({
         const { calculatedSpan, autoSpanFields } = calculateSpan(fields)
 
         return (
-          <Grid container key={rowIndex} spacing={2} className="debug">
+          <Grid container key={rowIndex} spacing={2}>
             {fields.map((field, fieldIndex) => (
               <Grid
                 key={fieldIndex}

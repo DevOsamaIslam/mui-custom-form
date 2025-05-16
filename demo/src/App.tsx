@@ -1,10 +1,9 @@
-// App.tsx
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ButtonProps, Container, Typography } from "@mui/material"
+import { type ButtonProps, Container, Typography } from "@mui/material"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { CustomForm } from "../../src/CustomForm.tsx"
-import { IFieldGroup } from "../../src/types.ts"
+import { CustomForm } from "mui-custom-form"
+import type { IFieldGroup } from "../../dist/types"
 
 // -------------------- BasicForm --------------------
 const BasicForm = () => {
@@ -242,9 +241,9 @@ function FormWithZod() {
     <CustomForm
       fieldsGroups={fieldsGroups}
       onSubmit={[onSubmit, submitError]}
-      formControl={formControl}
-      submitButton={submitButtonProps}
-      resetButton={resetButtonProps}
+      formControl={formControl as any}
+      submitButton={submitButtonProps as any}
+      resetButton={resetButtonProps as any}
       actionButtonsPlacement="flex-end"
       otherProps={{ spacing: 2 }}
     />

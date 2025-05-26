@@ -3,7 +3,7 @@ import { type ButtonProps, Container, Typography } from "@mui/material"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { CustomForm } from "mui-custom-form"
-import type { IFieldGroup } from "../../dist/types"
+import type { IFieldGroup } from "mui-custom-form/dist/types"
 
 // -------------------- BasicForm --------------------
 const BasicForm = () => {
@@ -18,7 +18,12 @@ const BasicForm = () => {
     },
   })
 
-  const fieldsGroups: IFieldGroup = [
+  const fieldsGroups: IFieldGroup<{
+    username: string
+    password: string
+    bio: string
+    subscribe: boolean
+  }> = [
     [
       {
         label: "Username",
@@ -119,6 +124,10 @@ const Fields = z.object({
   customField: z.string().optional(),
   eventDates: z.tuple([z.date().nullable(), z.date().nullable()]).optional(),
   subscribe: z.boolean().optional(),
+  x: z.object({
+    a: z.string().optional(),
+    b: z.string().optional(),
+  }),
 })
 
 type FieldTypes = z.infer<typeof Fields>
@@ -241,9 +250,9 @@ function FormWithZod() {
     <CustomForm
       fieldsGroups={fieldsGroups}
       onSubmit={[onSubmit, submitError]}
-      formControl={formControl as any}
-      submitButton={submitButtonProps as any}
-      resetButton={resetButtonProps as any}
+      formControl={formControl}
+      submitButton={submitButtonProps}
+      resetButton={resetButtonProps}
       actionButtonsPlacement="flex-end"
       otherProps={{ spacing: 2 }}
     />

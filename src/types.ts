@@ -1,6 +1,7 @@
 import { ButtonProps, StackProps } from "@mui/material"
 import { CSSProperties } from "react"
 import {
+  FieldPath,
   FieldValues,
   SubmitErrorHandler,
   SubmitHandler,
@@ -24,44 +25,45 @@ type BaseTypes =
 
 export interface ISelectField {
   type: SelectTypes
-  list: $option[]
+  list: TOption[]
 }
 
 export interface IOtherField {
   type: BaseTypes
-  list?: $option[]
+  list?: TOption[]
   // For custom components, specify the component
   component?: React.ComponentType<CustomComponentProps>
 }
 
-export type ICustomField<T = string> = {
+export type ICustomField<T extends string> = {
   label: string
-  name: name<T> | name<T>[]
+  name: T
   required?: boolean
   otherProps?: any
   span?: number
 } & (
   | {
       type: SelectTypes
-      list: $option[]
+      list: TOption[]
     }
   | {
       type: BaseTypes
-      list?: $option[]
+      list?: TOption[]
       component?: React.ComponentType<CustomComponentProps>
     }
 )
 
-export type $option<T = any> = {
+export type TOption<T = any> = {
   icon?: React.ReactNode
   label: string
   value: T
 }
 
-export type IFieldGroup<T = any> = ICustomField<T>[][]
+export type IFieldGroup<TFormValues extends FieldValues = FieldValues> =
+  ICustomField<FieldPath<TFormValues>>[][]
 
 export interface ICustomForm<T extends FieldValues> {
-  fieldsGroups: IFieldGroup<any>
+  fieldsGroups: IFieldGroup<T>
   onSubmit: [SubmitHandler<T>, SubmitErrorHandler<T>?]
   formControl: UseFormReturn<T>
   actionButtonsPlacement?: CSSProperties["justifyContent"]

@@ -1,5 +1,6 @@
 // CustomForm.tsx
 import {
+  Box,
   Button,
   Checkbox,
   FormControl,
@@ -157,21 +158,22 @@ export const CustomForm = <T extends FieldValues>({
             <FormLabel component="legend" required={field.required}>
               {field.label}
             </FormLabel>
-            <Button variant="contained" component="label">
-              Upload File
-              <input
-                type="file"
-                hidden
-                onChange={(e) => {
-                  const fileValue =
-                    e.target.files && e.target.files.length > 0
-                      ? e.target.files
-                      : undefined
-                  setValue(field.name as any, fileValue as any)
-                }}
-                {...field.otherProps}
-              />
-            </Button>
+            <>
+              <Box component="label" {...field.otherProps}>
+                {field.component}
+                <input
+                  type="file"
+                  hidden
+                  onChange={(e) => {
+                    const fileValue =
+                      e.target.files && e.target.files.length > 0
+                        ? e.target.files
+                        : undefined
+                    setValue(field.name as any, fileValue as any)
+                  }}
+                />
+              </Box>
+            </>
           </FormControl>
         )
 

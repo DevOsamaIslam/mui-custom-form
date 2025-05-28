@@ -1,6 +1,6 @@
-import { Container, Typography, type ButtonProps } from "@mui/material"
+import { Button, Container, Typography, type ButtonProps } from "@mui/material"
 import { useForm } from "react-hook-form"
-import CustomForm from "mui-custom-form"
+import { CustomForm } from "mui-custom-form"
 import type { IFieldGroup } from "mui-custom-form/dist/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import z from "zod"
@@ -124,10 +124,12 @@ const Fields = z.object({
   customField: z.string().optional(),
   eventDates: z.tuple([z.date().nullable(), z.date().nullable()]).optional(),
   subscribe: z.boolean().optional(),
-  x: z.object({
-    a: z.string().optional(),
-    b: z.string().optional(),
-  }),
+  x: z
+    .object({
+      a: z.string().optional(),
+      b: z.string().optional(),
+    })
+    .optional(),
 })
 
 type FieldTypes = z.infer<typeof Fields>
@@ -224,6 +226,7 @@ function FormWithZod() {
         name: "file",
         type: "file",
         required: false,
+        fileInputComponent: <Button variant="contained">Upload</Button>,
       },
     ],
   ]

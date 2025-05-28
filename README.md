@@ -63,44 +63,34 @@ npm install mui-custom-form
 | `span`       | Grid span for the field (1-12).             | **No**           |
 | `component`  | Custom React component for the field.       | *Conditional*    |
 
-> **Notes**: 
+> **Notes**:
 > - The `list` prop is **required** when the `type` is `single-select`, `multi-select`, `checkbox-group`, or `radio-group`.
 > - The `component` prop is **required** when the `type` is `custom`.
+> - The `fileInputComponent` prop is **optional** when the `type` is `file`. It allows you to provide a custom React component or element to serve as the clickable area for the file input. If not provided, a default clickable area will be rendered.
 
-### 🧩 Custom Components
-
-To integrate custom components into your forms, ensure they adhere to the `CustomComponentProps` interface, which requires `value` and `onChange` props.
-
-```typescript
-export interface CustomComponentProps {
-  value: any;
-  onChange: (value: any) => void;
-  [key: string]: any; // Allow additional props
-}
-```
-
-**Example of a Custom Component:**
+**Example of `fileInputComponent` usage:**
 
 ```tsx
-// CustomComponents.tsx
-import React from "react";
-import { TextField } from "@mui/material";
-import { CustomComponentProps } from "./types";
+import { Button } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-export const CustomTextComponent: React.FC<CustomComponentProps> = ({
-  value,
-  onChange,
-  placeholder,
-}) => {
-  return (
-    <TextField
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      fullWidth
-    />
-  );
-};
+// ... inside your fieldsGroups configuration
+{
+  label: "Upload Document",
+  name: "document",
+  type: "file",
+  fileInputComponent: (
+    <Button
+      variant="contained"
+      component="span" // Important: This makes the Button act as a span, allowing the hidden input to be clicked
+      startIcon={<CloudUploadIcon />}
+    >
+      Upload File
+    </Button>
+  ),
+  required: false,
+  span: 6,
+}
 ```
 
 ## 📖 Examples
@@ -276,210 +266,6 @@ const FormWithZod = () => {
 };
 
 export default FormWithZod;
-```
-
-### Comprehensive Example with All Field Types
-
-An extensive example showcasing all supported field types, customizable input props, and custom components.
-
-```tsx
-// ComprehensiveForm.tsx
-import React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Container, Typography, ButtonProps } from "@mui/material";
-import { CustomForm } from "mui-custom-form";
-import { IFieldGroup } from "mui-custom-form/types";
-import {
-  CustomTextComponent,
-  DateRangePickerComponent,
-} from "./CustomComponents"; // Ensure correct import path
-
-const GENDERS = ["Male", "Female", "Other"] as const;
-const HOBBIES = ["Coding", "Collections", "Hiking"] as const;
-
-const Fields = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  bio: z.string().optional(),
-  subscribe: z.boolean().optional(),
-  age: z
-    .number({
-      required_error: "Age is required",
-      invalid_type_error: "Age must be a number",
-    })
-    .min(16, "Minimum age is 16")
-    .max(80, "Maximum age is 80"),
-  gender: z.enum(GENDERS, { required_error: "Gender is required" }),
-  hobbies: z
-    .array(z.enum(HOBBIES), { required_error: "Hobbies are required" })
-    .nonempty("Please choose at least one hobby"),
-  birthDate: z.date({ required_error: "Birthdate is required" }),
-  file: z.instanceof(File).optional(),
-  customField: z.string().optional(),
-  eventDates: z
-    .tuple([z.date().nullable(), z.date().nullable()])
-    .optional(),
-});
-
-type FieldTypes = z.infer<typeof Fields>;
-
-const ComprehensiveForm = () => {
-  const formControl = useForm<FieldTypes>({
-    resolver: zodResolver(Fields),
-    defaultValues: {
-      subscribe: false,
-      hobbies: [],
-      eventDates: [null, null],
-    },
-  });
-
-  const fieldsGroups: IFieldGroup<FieldTypes> = [
-    [
-      {
-        label: "Username",
-        name: "username",
-        type: "text",
-        required: true,
-        otherProps: { placeholder: "Enter your username" },
-        span: 6,
-      },
-      {
-        label: "Password",
-        name: "password",
-        type: "password",
-        required: true,
-        otherProps: { placeholder: "Enter your password" },
-        span: 6,
-      },
-    ],
-    [
-      {
-        label: "Bio",
-        name: "bio",
-        type: "textarea",
-        required: false,
-        otherProps: { rows: 5, placeholder: "Tell us about yourself" },
-        span: 12,
-      },
-    ],
-    [
-      {
-        label: "Subscribe to Newsletter",
-        name: "subscribe",
-        type: "switch",
-        required: false,
-        otherProps: { color: "primary" },
-        span: 6,
-      },
-    ],
-    [
-      {
-        label: "Age",
-        name: "age",
-        type: "number",
-        required: true,
-        otherProps: { min: 16, max: 80 },
-        span: 6,
-      },
-      {
-        label: "Gender",
-        name: "gender",
-        type: "radio-group",
-        list: GENDERS.map((gender) => ({
-          label: gender,
-          value: gender,
-        })),
-        required: true,
-        otherProps: { row: true },
-        span: 6,
-      },
-    ],
-    [
-      {
-        label: "Hobbies",
-        name: "hobbies",
-        type: "checkbox-group",
-        list: HOBBIES.map((hobby) => ({ label: hobby, value: hobby })),
-        required: true,
-        span: 6,
-      },
-      {
-        label: "Birthdate",
-        name: "birthDate",
-        type: "date",
-        required: true,
-        span: 6,
-      },
-    ],
-    [
-      {
-        label: "Event Dates",
-        name: "eventDates",
-        type: "custom",
-        component: DateRangePickerComponent,
-        required: false,
-        span: 6,
-      },
-      {
-        label: "Upload Image",
-        name: "file",
-        type: "file",
-        required: false,
-        span: 6,
-      },
-    ],
-    [
-      {
-        label: "Custom Text Field",
-        name: "customField",
-        type: "custom",
-        component: CustomTextComponent,
-        required: false,
-        otherProps: { placeholder: "Custom input here" },
-        span: 12,
-      },
-    ],
-  ];
-
-  const onSubmit = (data: FieldTypes) => {
-    console.log({ success: data });
-  };
-
-  const submitError = (errors: any) => {
-    console.log({ errors });
-  };
-
-  const submitButtonProps: ButtonProps = {
-    variant: "contained",
-    color: "primary",
-  };
-
-  const resetButtonProps: ButtonProps = {
-    variant: "outlined",
-    color: "secondary",
-  };
-
-  return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Comprehensive Form
-      </Typography>
-      <CustomForm
-        fieldsGroups={fieldsGroups}
-        onSubmit={[onSubmit, submitError]}
-        formControl={formControl}
-        submitButton={submitButtonProps}
-        resetButton={resetButtonProps}
-        actionButtonsPlacement="flex-end"
-        otherProps={{ spacing: 2 }}
-      />
-    </Container>
-  );
-};
-
-export default ComprehensiveForm;
 ```
 
 ## 🤝 Contribution

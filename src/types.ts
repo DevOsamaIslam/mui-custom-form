@@ -8,8 +8,6 @@ import {
   UseFormReturn,
 } from "react-hook-form"
 
-type name<T> = T extends string ? string : keyof T
-
 type SelectTypes = "single-select" | "multi-select"
 type BaseTypes =
   | "text"
@@ -66,7 +64,7 @@ export interface ICustomForm<T extends FieldValues> {
   fieldsGroups: IFieldGroup<T>
   onSubmit: [SubmitHandler<T>, SubmitErrorHandler<T>?]
   formControl: UseFormReturn<T>
-  actionButtonsPlacement?: CSSProperties["justifyContent"]
+  actionButtonsPlacement?: StackProps["justifyContent"]
   submitButton?: ButtonProps | boolean
   resetButton?: ButtonProps | boolean
   layout?: StackProps["direction"]

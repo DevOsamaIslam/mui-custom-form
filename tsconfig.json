@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "jsx": "react",
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
     "strict": true,
+    "noImplicitAny": false,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true, // **Add this line**
     "forceConsistentCasingInFileNames": true,
     "noEmitOnError": false // **Add this line**
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/types.ts"],
   "exclude": ["node_modules", "dist"]
 }

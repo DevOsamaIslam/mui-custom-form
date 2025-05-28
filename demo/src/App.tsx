@@ -1,9 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { type ButtonProps, Container, Typography } from "@mui/material"
+import { Container, Typography, type ButtonProps } from "@mui/material"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { CustomForm } from "mui-custom-form"
+import CustomForm from "mui-custom-form"
 import type { IFieldGroup } from "mui-custom-form/dist/types"
+import { zodResolver } from "@hookform/resolvers/zod"
+import z from "zod"
 
 // -------------------- BasicForm --------------------
 const BasicForm = () => {
@@ -259,7 +259,6 @@ function FormWithZod() {
   )
 }
 
-// -------------------- Main App Component --------------------
 function App() {
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>

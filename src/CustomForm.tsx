@@ -1,4 +1,3 @@
-// CustomForm.tsx
 import {
   Box,
   Button,
@@ -153,6 +152,7 @@ export const CustomForm = <T extends FieldValues>({
         )
 
       case "file":
+        const Component = field.component as any
         return (
           <FormControl fullWidth error={!!field.required}>
             <FormLabel component="legend" required={field.required}>
@@ -380,3 +380,5 @@ export const CustomForm = <T extends FieldValues>({
     </Stack>
   )
 }
+
+export default CustomForm

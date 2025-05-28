@@ -4,6 +4,10 @@
   "description": "A versatile React form component utilizing MUI components and react-hook-form.",
   "main": "dist/CustomForm.js",
   "types": "dist/CustomForm.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./components/fields/*": "./dist/components/fields/*.js"
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build"

@@ -63,7 +63,7 @@ export const CustomForm = <T extends FieldValues>({
   const calculateSpan = (fields: ICustomField<any>[]) => {
     const totalDefinedSpan = fields.reduce(
       (acc, field) => acc + (field.span || 0),
-      0
+      0,
     )
     const autoSpanFields = fields.filter((field) => !field.span).length
     const remainingSpan = 12 - totalDefinedSpan
@@ -93,8 +93,8 @@ export const CustomForm = <T extends FieldValues>({
                   field.span
                     ? field.span
                     : autoSpanFields > 0
-                    ? calculatedSpan
-                    : 12
+                      ? calculatedSpan
+                      : 12
                 }>
                 {renderField(field as ICustomField<Path<T>>)}
               </Grid>
@@ -104,7 +104,7 @@ export const CustomForm = <T extends FieldValues>({
       })}
       <Stack
         direction="row"
-        justifyContent={actionButtonsPlacement || "flex-end"}
+        sx={{ justifyContent: actionButtonsPlacement || "flex-end" }}
         spacing={2}>
         {resetButton && (
           <Button

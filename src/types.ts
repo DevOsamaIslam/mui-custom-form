@@ -52,20 +52,23 @@ export interface ISwitchField<T extends string> extends ICustomFieldBase<T> {
   type: "switch"
 }
 
-export interface ICheckboxGroupField<T extends string>
-  extends ICustomFieldBase<T> {
+export interface ICheckboxGroupField<
+  T extends string,
+> extends ICustomFieldBase<T> {
   type: "checkbox-group"
   list: TOption[]
 }
 
-export interface IRadioGroupField<T extends string>
-  extends ICustomFieldBase<T> {
+export interface IRadioGroupField<
+  T extends string,
+> extends ICustomFieldBase<T> {
   type: "radio-group"
   list: TOption[]
 }
 
-export interface ICustomComponentField<T extends string>
-  extends ICustomFieldBase<T> {
+export interface ICustomComponentField<
+  T extends string,
+> extends ICustomFieldBase<T> {
   type: "custom"
   component: React.ComponentType<CustomComponentProps>
 }
@@ -89,7 +92,7 @@ export interface ICustomForm<T extends FieldValues> {
   fieldsGroups: IFieldGroup<T>
   onSubmit: [SubmitHandler<T>, SubmitErrorHandler<T>?]
   formControl: UseFormReturn<T>
-  actionButtonsPlacement?: StackProps["justifyContent"]
+  actionButtonsPlacement?: CSSProperties["justifyContent"]
   submitButton?: ButtonProps | boolean
   resetButton?: ButtonProps | boolean
   layout?: StackProps["direction"]

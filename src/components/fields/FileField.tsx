@@ -41,7 +41,7 @@ export const FileField = <T extends FieldValues>({
             <FormLabel component="legend" required={field.required}>
               {field.label}
             </FormLabel>
-            <Stack direction="row" alignItems="center" spacing={2}>
+            <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
               <Box
                 onClick={() => fileInputRef.current?.click()}
                 sx={{ cursor: "pointer" }}
@@ -72,7 +72,7 @@ export const FileField = <T extends FieldValues>({
               </Box>
 
               {selectedFile && (
-                <Stack direction="row" alignItems="center" spacing={1}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                   {selectedFile.type.startsWith("image/") && previewUrl ? (
                     <img
                       src={previewUrl}

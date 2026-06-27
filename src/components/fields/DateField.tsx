@@ -1,4 +1,3 @@
-import { TextField as MuiTextField, TextFieldProps } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import React from "react"
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form"
@@ -24,18 +23,17 @@ export const DateField = <T extends FieldValues>({
         <DatePicker
           {...controlField}
           value={controlField.value || null}
-          {...field.otherProps}
           label={field.label}
           onChange={(date) => controlField.onChange(date)}
-          renderInput={(params: TextFieldProps) => (
-            <MuiTextField
-              {...params}
-              required={field.required}
-              error={!!error}
-              helperText={error?.message}
-              fullWidth
-            />
-          )}
+          slotProps={{
+            textField: {
+              required: field.required,
+              error: !!error,
+              helperText: error?.message,
+              fullWidth: true,
+            },
+          }}
+          {...field.otherProps}
         />
       )}
     />

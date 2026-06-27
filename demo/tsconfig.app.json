@@ -15,6 +15,19 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path mapping to avoid duplicate module types */
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "react-hook-form": ["../node_modules/react-hook-form"],
+      "@mui/material": ["../node_modules/@mui/material"],
+      "@mui/material/*": ["../node_modules/@mui/material/*"],
+      "@emotion/react": ["../node_modules/@emotion/react"],
+      "@emotion/react/*": ["../node_modules/@emotion/react/*"],
+      "@emotion/styled": ["../node_modules/@emotion/styled"],
+      "@emotion/styled/*": ["../node_modules/@emotion/styled/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,

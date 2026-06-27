@@ -107,22 +107,20 @@ const Fields = z.object({
   password: z.string().min(1, "Password is required"),
   age: z
     .number({
-      required_error: "Age is required",
-      invalid_type_error: "Age must be a number",
+      message: "Age is required and must be a number",
     })
     .min(16, "Minimum age is 16")
     .max(80, "Maximum age is 80"),
-  gender: z.enum(GENDERS, { required_error: "Gender is required" }),
+  gender: z.enum(GENDERS, { message: "Gender is required" }),
   bio: z.string(),
   hobbies: z
-    .array(z.enum(HOBBIES), { required_error: "Hobbies are required" })
+    .array(z.enum(HOBBIES), { message: "Hobbies are required" })
     .nonempty("Please choose at least one hobby"),
-  planDate: z.date({ required_error: "planDate is required" }),
+  planDate: z.date({ message: "planDate is required" }),
   file: z
     .instanceof(FileList, { message: "File must be a valid file" })
     .optional(),
   customField: z.string().optional(),
-  eventDates: z.tuple([z.date().nullable(), z.date().nullable()]).optional(),
   subscribe: z.boolean().optional(),
   x: z
     .object({
@@ -139,7 +137,6 @@ function FormWithZod() {
     resolver: zodResolver(Fields),
     defaultValues: {
       hobbies: [],
-      eventDates: [null, null],
     },
   })
 

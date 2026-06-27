@@ -3,10 +3,12 @@
     "target": "ES2020",
     "module": "ES2020",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "jsx": "react",
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
@@ -15,6 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "noEmitOnError": false // **Add this line**
   },
-  "include": ["src/**/*", "src/types.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
